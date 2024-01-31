@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes shiver {
+    0%, 20%, 40%, 60%, 100% {
+      transform: translateX(0px);
+    }
+    10% {
+      transform: translateX(calc(var(--shiver-amplitude) * -1));
+    }
+    30% {
+      transform: translateX(calc(var(--shiver-amplitude) * 0.7));
+    }
+    50% {
+      transform: translateX(calc(var(--shiver-amplitude) * -0.49));
+    }
+    70% {
+      transform: translateX(calc(var(--shiver-amplitude) * 0.343));
+    }
+    90% {
+      transform: translateX(calc(var(--shiver-amplitude) * -0.24));
+    }
+  }
+
+  .animate-shiver {
+    animation-name: shiver;
+    animation-duration: var(--shiver-duration);
+    animation-timing-function: ease-in;
+  }
+  
+  @keyframes inflate {
+    0%, 100% {
+      transform: scale(1.0);
+    }
+
+    50% {
+      transform: scale(var(--inflate-amplitude));
+    }
+  }
+
+  .animate-inflate {
+    animation-name: inflate;
+    animation-duration: var(--inflate-duration);
+    animation-timing-function: linear;
+  }
+
+  @keyframes flip-x {
+    0%, 100% {
+      transform: rotateX(0deg);
+    }
+    50% {
+      transform: rotateX(90deg);
+    }
+  }
+
+  .animate-flip-x {
+    animation-name: flip-x;
+    animation-duration: var(--flip-duration);
+    animation-timing-function: linear;
+  }
+
+  @keyframes fade-in {
+    0% {
+      filter: opacity(0%);
+    }
+    100% {
+      filter: opacity(100%);
+    }
+  }
+
+  .animate-fade-in {
+    animation-name: fade-in;
+    animation-duration: var(--fade-in-duration);
+    animation-timing-function: linear;
+  }
+
+  .animate-fade-out {
+    animation: fade-in;
+    animation-duration: var(--fade-out-duration);
+    animation-timing-function: linear;
+    animation-direction: reverse;
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    40% {
+      transform: translateY(calc(var(--bounce-amplitude) * -1.0));
+    }
+    90% {
+      transform: translateY(calc(var(--bounce-amplitude) * 0.25));
+    }
+  }
+
+  .animate-bounce {
+    animation: bounce;
+    animation-duration: var(--bounce-duration);
+    animation-timing-function: linear;
+  }
+}

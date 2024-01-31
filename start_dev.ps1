@@ -1,0 +1,1 @@
+﻿start pwsh {.\start_vue.dev.ps1}

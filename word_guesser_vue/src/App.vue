@@ -1,0 +1,342 @@
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue';
+import type { Ref } from 'vue';
+import { onBeforeUnload } from '@/composables/onBeforeUnload';
+import { animateClass, forceReflow } from '@/composables/Animations';
+import { useGameStateStore } from '@/stores/GameStateStore';
+import { useMessageBubbles } from '@/composables/MessageBubblesStore';
+import SettingsMenu from '@/components/SettingsMenu.vue';
+import WordCard from '@/components/WordCard.vue';
+import Keyboard from '@/components/Keyboard.vue';
+import MessageBubbles from '@/components/MessageBubbles.vue';
+import axios from 'axios';
+
+/* Data and Initilzation */
+
+const showModal: Ref<boolean> = ref(false);
+
+const inputBlocked: Ref<boolean> = ref(false);
+
+const gameState = useGameStateStore();
+
+const grades: Array<string> = ["Genius", "Magnificent", "Impressive", "Splendid", "Great", "Phew"];
+
+const wordCardElements: Array<HTMLElement | null> = reactive(
+  [null, null, null, null, null, null]
+);
+
+const wordCardRefs: Array<any> = reactive(
+  [null, null, null, null, null, null]
+);
+
+const BubblesElement: Ref<HTMLElement | null> = ref(null);
+
+const messageBubbles = useMessageBubbles('bubbles-0');
+
+const setWordCardRef = function(elem: any, idx: number): void {
+  wordCardRefs[idx] = elem;
+};
+
+onMounted(() => {
+  gameState.initializeGameState();
+
+  for (let i = 0; i < gameState.rowIndex; ++i)
+    wordCardRefs[i].flipCard(800, 400);
+
+  if (gameState.rowIndex !== 0)
+    wait(2400);
+
+  for (let i = 0; i < gameState.rowIndex; ++i)
+    gameState.updateLetterList(gameState.guessList[i], gameState.resultList[i]);
+  
+  for (let i: number = 0; i < 6; ++i)
+    wordCardElements[i] = document.getElementById(`word-card-${i}`);
+
+  addEventListener('keyup', async (event) => {
+    handleKeyboardInput(event.key);
+  });
+
+  return;
+});
+
+/* Utility Functions */
+
+const wait = function(duration: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    setTimeout(
+      () => {
+        resolve();
+      }, 
+      duration
+    );
+  });
+};
+
+/* Menus and Modals */
+
+const toggleModal = function(): void {
+  showModal.value = !showModal.value;
+
+  return;
+};
+
+/* Backend Communication */
+
+const submitWord = async function(word: string): Promise<any> {
+  let result: any = {};
+  
+  await axios
+    .put(
+      'api/submit-word/', 
+      { word: word }, 
+      { timeout: 3000 }
+    )
+    .then((response) => {
+      result.status = 'submitted';
+      result.data = response.data.data;
+    })
+    .catch((error) => {
+      result.status = 'error';
+      result.data = error;
+    });
+
+  return result;
+};
+
+const requestAnswer = async function(): Promise<any> {
+  let result: any = {};
+  
+  await axios
+    .get(
+      'api/request-answer/', 
+      { timeout: 3000 }
+    )
+    .then((response) => {
+      result.status = 'submitted';
+      result.data = response.data;
+    })
+    .catch((error) => {
+      result.status = 'error';
+      result.data = error;
+    });
+  
+  return result;
+};
+
+/* Data Manipulation */
+
+/* Input Events and Handlers */
+
+const handleEscape = async function(): Promise<void> {
+  if (showModal.value === true)
+    showModal.value = false;
+
+  return;
+};
+
+const handleWordSubmit = async function(): Promise<void> {
+  const wordCardRef = wordCardRefs[gameState.rowIndex];
+
+  const validated = gameState.validateGuess();
+  
+  if (validated.status === 'success') {
+    const word = validated.description;
+    
+    const result = await submitWord(word);
+
+    if (result.status === 'submitted') {
+      if (result.data.description === "word not found") {
+        wordCardRef.shiverCard('10px', 400);
+        messageBubbles.push("Word not in dictionary", 3000);
+      }
+      else if (result.data.description === "word checked") {
+        gameState.updateResultList(result.data.result);
+        gameState.toNextWordCard();
+
+        wordCardRef.flipCard(600, 300);
+        await wait(1800);
+
+        gameState.updateLetterList(word, result.data.result);
+      }
+      else if (result.data.description === "correct answer") {
+        gameState.updateResultList(result.data.result);
+        gameState.toNextWordCard();
+        gameState.setComplete();
+        
+        wordCardRef.flipCard(600, 300);
+        await wait(1800);
+
+        gameState.updateLetterList(word, result.data.result);
+
+        wordCardRef.bounceCard('15px', 400, 100);
+
+        messageBubbles.push(grades[gameState.rowIndex], 3000);
+
+        // return;
+      }
+      else {
+        messageBubbles.push("Unknown description", 3000);
+      }
+
+      if (gameState.rowIndex === 6) {
+        const result = await requestAnswer();
+
+        if (result.status === 'error') {
+          messageBubbles.push("An error occurred", 3000);
+
+        }
+        else {
+          messageBubbles.push(`${result.result}`, 3000);
+        }
+      }
+    }
+    else if (result.status === 'error') {
+      messageBubbles.push("An error occurred", 3000);
+    }
+    else {
+      messageBubbles.push("Unknown status type", 3000);
+    }
+  }
+  else if (validated.status === 'failure') {
+    wordCardRef.shiverCard('10px', 400);
+    messageBubbles.push(validated.description, 3000);
+  }
+
+  return;
+};
+
+const handleLetterInput = async function(letter: string): Promise<void> {
+  gameState.inputLetter(letter);
+
+  return;
+};
+
+const handleBackspace = async function(): Promise<void> {
+  gameState.eraseLetter();
+
+  return;
+};
+
+const handleKeyboardInput = async function(key: string): Promise<void> {
+  if (gameState.isComplete === true || inputBlocked.value === true)
+    return;
+
+  inputBlocked.value = true;
+
+  if (key === 'Enter') {
+    await handleWordSubmit();
+  }
+  else if (key === 'Escape') {
+    await handleEscape();
+  }
+  else if (key === 'Backspace' || key === 'Delete') {
+    await handleBackspace();
+  }
+  else if (key.length === 1) {
+    let asciiCode = key.charCodeAt(0);
+
+    if (asciiCode >= 97 && asciiCode <= 122)
+      asciiCode -= 32;
+
+    if (asciiCode >= 65 && asciiCode <= 90)
+      await handleLetterInput(String.fromCharCode(asciiCode));
+  }
+
+  inputBlocked.value = false;
+
+  return;
+}
+
+const test1 = function() {
+  messageBubbles.push("This is a test message", 3000);
+};
+
+const test2 = function() {
+  return;
+};
+
+/* Card Manipulation */
+
+const resetGameState = function(): void {
+  if (inputBlocked.value === true)
+    return;
+
+  gameState.resetGameState();
+
+  return;
+};
+
+/* Animation Renderers */
+
+const shiverCard = function(target: HTMLElement, amplitude: string, duration: number): void {
+  animateClass(
+    target, 
+    duration, 
+    'animate-shiver', 
+    {
+      '--shiver-amplitude': amplitude,
+      '--shiver-duration': String(duration) + 'ms'
+    }
+  );
+};
+
+/* Local Storage */
+
+onBeforeUnload(() => {
+  gameState.saveGameStateToStorage();
+});
+
+/* Miscellaneous */
+
+</script>
+
+<template>
+  <div v-bind:class="{ 'theme-light': !gameState.isDarkTheme, 'theme-dark': gameState.isDarkTheme, 'theme-normal-contrast': !gameState.isHighContrast, 'theme-high-contrast': gameState.isHighContrast }" v-cloak>
+    <div class="absolute w-screen h-screen bg-background overflow-auto">
+      <SettingsMenu class="fixed z-10" v-bind:showModal="showModal" v-on:toggle-modal="() => toggleModal()" />
+
+      <div class="mx-[10%] my-[5%] p-10 space-y-8 bg-main shadow-sm shadow-gray-600 rounded-xl min-w-max">
+        <nav class="grid grid-cols-4">
+          <div class="flex"></div>
+          <div class="col-span-2 flex justify-center items-center font-merriweather text-4xl font-bold text-positive">
+            Word Guesser
+          </div>
+          <div class="flex justify-end items-center">
+            <button type="button" v-on:click="(event) => toggleModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="32" height="32"><path class="fill-positive" d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+            </button>
+          </div>
+        </nav>
+
+        <main class="space-y-6">
+          <div class="flex flex-col space-y-2">
+            <WordCard
+              v-for="i in 6"
+              v-bind:id="'word-card-' + (i - 1)"
+              v-bind:letters="gameState.guessList[i - 1]"
+              v-bind:row-index="i - 1"
+              v-bind:ref="(elem) => setWordCardRef(elem, i - 1)"
+            />
+          </div>
+
+          <Keyboard v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
+
+          <div class="flex justify-center items-center space-x-4">
+            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-sky-500" v-on:click="shiverCard(wordCardElements[0]!, '15px', 500)">Shiver</button>
+            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-red-500" v-on:keydown.enter.prevent="" v-on:click="(event) => resetGameState()">Reset</button>
+            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-yellow-500" v-on:click="test1()">Test1</button>
+            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-green-500" v-on:click="test2()">Test2</button>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="fixed top-[25%] w-full">
+      <MessageBubbles 
+        id="bubbles" 
+        v-bind:store-id="'bubbles-0'"
+        v-bind:max-queue-size="5"
+      />
+    </div>
+  </div>
+</template>
