@@ -170,7 +170,7 @@ const handleWordSubmit = async function(): Promise<void> {
 
         wordCardRef.bounceCard('15px', 400, 100);
 
-        messageBubbles.push(grades[gameState.rowIndex], 3000);
+        messageBubbles.push(grades[gameState.rowIndex - 1], 3000);
 
         // return;
       }
