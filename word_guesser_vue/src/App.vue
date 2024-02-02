@@ -113,7 +113,7 @@ const requestAnswer = async function(): Promise<any> {
     )
     .then((response) => {
       result.status = 'submitted';
-      result.data = response.data;
+      result.data = response.data.data;
     })
     .catch((error) => {
       result.status = 'error';
@@ -157,6 +157,18 @@ const handleWordSubmit = async function(): Promise<void> {
         await wait(1800);
 
         gameState.updateLetterList(word, result.data.result);
+        
+        if (gameState.rowIndex === 6) {
+          const result = await requestAnswer();
+
+          if (result.status === 'error') {
+            messageBubbles.push("An error occurred", 3000);
+
+          }
+          else {
+            messageBubbles.push(`${result.data.result}`, 3000);
+          }
+        }
       }
       else if (result.data.description === "correct answer") {
         gameState.updateResultList(result.data.result);
@@ -169,25 +181,12 @@ const handleWordSubmit = async function(): Promise<void> {
         gameState.updateLetterList(word, result.data.result);
 
         wordCardRef.bounceCard('15px', 400, 100);
+        await wait(800);
 
         messageBubbles.push(grades[gameState.rowIndex - 1], 3000);
-
-        // return;
       }
       else {
         messageBubbles.push("Unknown description", 3000);
-      }
-
-      if (gameState.rowIndex === 6) {
-        const result = await requestAnswer();
-
-        if (result.status === 'error') {
-          messageBubbles.push("An error occurred", 3000);
-
-        }
-        else {
-          messageBubbles.push(`${result.result}`, 3000);
-        }
       }
     }
     else if (result.status === 'error') {
@@ -246,14 +245,6 @@ const handleKeyboardInput = async function(key: string): Promise<void> {
 
   return;
 }
-
-const test1 = function() {
-  messageBubbles.push("This is a test message", 3000);
-};
-
-const test2 = function() {
-  return;
-};
 
 /* Card Manipulation */
 
@@ -322,10 +313,7 @@ onBeforeUnload(() => {
           <Keyboard v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
 
           <div class="flex justify-center items-center space-x-4">
-            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-sky-500" v-on:click="shiverCard(wordCardElements[0]!, '15px', 500)">Shiver</button>
             <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-red-500" v-on:keydown.enter.prevent="" v-on:click="(event) => resetGameState()">Reset</button>
-            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-yellow-500" v-on:click="test1()">Test1</button>
-            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-green-500" v-on:click="test2()">Test2</button>
           </div>
         </main>
       </div>
