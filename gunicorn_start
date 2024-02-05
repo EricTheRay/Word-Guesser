@@ -1,0 +1,28 @@
+#!/bin/sh
+
+NAME='word_guesser_django'
+DJANGODIR=/webapps/word_guesser/word_guesser_django
+SOCKFILE=/webapps/word_guesser/venv/run/gunicorn.sock
+USER=Eric
+GROUP=webapps
+N_WORKERS=3
+DJANGO_SETTINGS_MODULE=word_guesser_django.settings
+DJANGO_WSGI_MODULE=word_guesser_django.wsgi
+TIMEOUT=120
+
+cd $DJANGODIR
+source ../venv/bin/activate
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DJANGODIR:$PYTHONPATH
+
+RUNDIR=$(dirname $SOCKFILE)
+test -d $RUNDIR || mkdir -p $RUNDIR
+
+exec ../venv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+--name $NAME \
+--workers $N_WORKERS \
+--timeout $TIMEOUT \
+--user=$USER --group=$GROUP \
+--bind=unix:$SOCKFILE \
+--log-level=debug \
+--log-file=-
