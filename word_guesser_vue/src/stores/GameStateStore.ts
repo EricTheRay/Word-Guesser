@@ -146,6 +146,8 @@ export const useGameStateStore = defineStore('gameState', () => {
 
     isComplete.value = gameState.isComplete;
 
+    rowIndex.value = 6;
+
     let isEmpty = false;
 
     for (let i = 0; i < 6; ++i) {
