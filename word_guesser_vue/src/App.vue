@@ -319,7 +319,7 @@ onBeforeUnload(() => {
       </div>
     </div>
 
-    <div class="fixed top-[25%] w-full z-20">
+    <div class="fixed top-[25%] w-full z-20 pointer-events-none">
       <MessageBubbles 
         id="bubbles" 
         v-bind:store-id="'bubbles-0'"
