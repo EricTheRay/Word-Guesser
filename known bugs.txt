@@ -1,0 +1,4 @@
+[Feb. 9, 2024]
+Layout issue on mobile devices.
+Local storage not refresh at date change.
+Status 'absent' overwriting 'present'.

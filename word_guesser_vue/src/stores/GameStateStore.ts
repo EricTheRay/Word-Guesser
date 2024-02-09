@@ -242,9 +242,9 @@ export const useGameStateStore = defineStore('gameState', () => {
   };
 
   const updateLetterList = function(word: string | Array<string>, checkResult: Array<string>): void {
-    if (Array.isArray(word) === true) {
+    if (typeof word !== 'string') {
       word = word.reduce(
-        (accu, curr) => {
+        (accu: string, curr: string) => {
           return accu + curr;
         },
         ''
