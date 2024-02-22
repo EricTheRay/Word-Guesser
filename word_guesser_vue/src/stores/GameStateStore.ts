@@ -257,14 +257,15 @@ export const useGameStateStore = defineStore('gameState', () => {
         revealed.add(word[j]);
         currentAnswer[j] = word[j];
       }
-      else if (checkResult[j] === 'absent') {
-        letterList[word[j]] = 'absent';
-      }
       else if (checkResult[j] === 'present') {
         if (letterList[word[j]] !== 'correct') {
           letterList[word[j]] = 'present';
           revealed.add(word[j]);
         }
+      }
+      else if (checkResult[j] === 'absent') {
+        if (letterList[word[j]] !== 'correct' && letterList[word[j]] !== 'present')
+          letterList[word[j]] = 'absent';
       }
     }
 

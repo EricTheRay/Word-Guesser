@@ -2,3 +2,7 @@
 Layout issue on mobile devices.
 Local storage not refresh at date change.
 Status 'absent' overwriting 'present'.
+
+[Feb. 22, 2024]
+Improved layout on mobile devices.
+Fixed status 'absent' overwriting 'present'.

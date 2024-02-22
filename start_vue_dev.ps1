@@ -1,2 +1,2 @@
-﻿write-host "Hello World!!"
-read-host "Press any key to continue..."
+﻿Set-Location .\word_guesser_vue
+npm run dev

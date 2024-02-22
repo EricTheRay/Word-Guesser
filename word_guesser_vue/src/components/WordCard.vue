@@ -221,7 +221,7 @@ defineExpose({
       v-bind:id="'letter-' + (i - 1)"
     >
       <div 
-        class="flex justify-center items-center font-inter font-bold text-3xl w-12 h-12 border-2" 
+        class="flex justify-center items-center font-inter font-bold text-3xl w-10 h-12 border-2" 
         v-bind:class="getCardDynamicClass(i - 1)" 
         v-bind:style="getCardDynamicStyle(i - 1)" 
       >
