@@ -3,6 +3,9 @@ import type { Ref } from 'vue';
 import { defineStore } from 'pinia'
 
 export const useGameStateStore = defineStore('gameState', () => {
+
+  const date: Ref<string> = ref('');
+
   const isComplete: Ref<boolean> = ref(false);
 
   const isHardMode: Ref<boolean> = ref(false);
@@ -99,6 +102,9 @@ export const useGameStateStore = defineStore('gameState', () => {
   };
 
   const resetGameState = function(): void {
+
+    date.value = new Date().toISOString().slice(0, 10);
+    
     isComplete.value = false;
 
     isHardMode.value = false;
@@ -126,10 +132,13 @@ export const useGameStateStore = defineStore('gameState', () => {
       currentAnswer[i] = ' ';
     }
 
+    saveGameStateToStorage();
+
     return;
   };
 
   const initializeGameState = function(): void {
+
     const item = localStorage.getItem('gameState');
 
     if (item === null) {
@@ -139,6 +148,18 @@ export const useGameStateStore = defineStore('gameState', () => {
     }
     
     const gameState = JSON.parse(item);
+
+    console.log(gameState.date);
+
+    const last_date = new Date(gameState.date);
+
+    if (last_date.toString() === 'Invalid Date' || (new Date().getTime() - last_date.getTime()) / 86400000 >= 1) {
+      resetGameState();
+
+      return;
+    }
+
+    date.value = gameState.date;
 
     isHardMode.value = gameState.isHardMode;
     isDarkTheme.value = gameState.isDarkTheme;
@@ -311,6 +332,7 @@ export const useGameStateStore = defineStore('gameState', () => {
     localStorage.setItem(
       'gameState', 
       JSON.stringify({
+        date: date.value, 
         isHardMode: isHardMode.value, 
         isDarkTheme: isDarkTheme.value, 
         isHighContrast: isHighContrast.value, 
@@ -330,6 +352,7 @@ export const useGameStateStore = defineStore('gameState', () => {
   };
 
   return {
+    date, 
     isHardMode, 
     isDarkTheme, 
     isHighContrast, 

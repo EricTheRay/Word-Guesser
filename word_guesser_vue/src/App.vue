@@ -135,6 +135,13 @@ const handleEscape = async function(): Promise<void> {
 };
 
 const handleWordSubmit = async function(): Promise<void> {
+
+  if (new Date().getTime() - new Date(gameState.date).getTime() >= 86400000) {
+    messageBubbles.push("Date changed (Please refresh)", 3000);
+
+    return;
+  }
+
   const wordCardRef = wordCardRefs[gameState.rowIndex];
 
   const validated = gameState.validateGuess();
