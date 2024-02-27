@@ -28,7 +28,7 @@ onMounted(() => {
   containerElement.value = document.querySelector(`#word-card-${props.rowIndex}`);
 
   for (let i: number = 0; i < 5; ++i)
-    letterCardElements[i] = document.querySelector(`#word-card-${props.rowIndex} > #letter-${i}`);
+    letterCardElements[i] = document.querySelector(`#word-card-${props.rowIndex} #letter-${i}`);
 });
 
 /* Animation Renderers */
@@ -214,18 +214,21 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex justify-center space-x-2">
-    <div
-      v-for="i in 5"
-      v-bind:key="i"
-      v-bind:id="'letter-' + (i - 1)"
-    >
-      <div 
-        class="flex justify-center items-center font-inter font-bold text-3xl w-10 h-12 border-2" 
-        v-bind:class="getCardDynamicClass(i - 1)" 
-        v-bind:style="getCardDynamicStyle(i - 1)" 
+  <div class="flex w-full h-full justify-center">
+    <div class="flex justify-center w-full max-w-[272px] sm:max-w-none space-x-1 sm:space-x-2">
+      <div
+        class="w-[15%] h-full sm:w-auto sm:h-auto"
+        v-for="i in 5"
+        v-bind:key="i"
+        v-bind:id="'letter-' + (i - 1)"
       >
-      {{ gameState.guessList[props.rowIndex][i - 1] }}
+        <div 
+          class="flex justify-center items-center font-inter font-bold text-3xl w-full h-full sm:w-12 sm:h-12 border-2" 
+          v-bind:class="getCardDynamicClass(i - 1)" 
+          v-bind:style="getCardDynamicStyle(i - 1)" 
+        >
+        {{ gameState.guessList[props.rowIndex][i - 1] }}
+        </div>
       </div>
     </div>
   </div>

@@ -37,14 +37,17 @@ const setWordCardRef = function(elem: any, idx: number): void {
   wordCardRefs[idx] = elem;
 };
 
-onMounted(() => {
+onMounted(async () => {
+
+  inputBlocked.value = true;
+
   gameState.initializeGameState();
 
   for (let i = 0; i < gameState.rowIndex; ++i)
     wordCardRefs[i].flipCard(800, 400);
 
   if (gameState.rowIndex !== 0)
-    wait(2400);
+    await wait(2400);
 
   for (let i = 0; i < gameState.rowIndex; ++i)
     gameState.updateLetterList(gameState.guessList[i], gameState.resultList[i]);
@@ -55,6 +58,8 @@ onMounted(() => {
   addEventListener('keyup', async (event) => {
     handleKeyboardInput(event.key);
   });
+
+  inputBlocked.value = false;
 
   return;
 });
@@ -293,7 +298,7 @@ onBeforeUnload(() => {
     <div class="absolute w-screen h-screen bg-background overflow-auto">
       <SettingsMenu class="fixed z-10" v-bind:showModal="showModal" v-on:toggle-modal="() => toggleModal()" />
 
-      <div class="mx-[10%] my-[5%] p-8 space-y-8 bg-main shadow-sm shadow-gray-600 rounded-xl min-w-max">
+      <div class="sm:mx-[10%] sm:my-[5%] p-4 sm:p-8 space-y-4 sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl sm:min-w-max h-full sm:h-auto">
         <nav class="grid grid-cols-5">
           <div class="flex"></div>
           <div class="col-span-3 flex justify-center items-center font-merriweather text-2xl sm:text-3xl font-bold text-positive">
@@ -306,8 +311,8 @@ onBeforeUnload(() => {
           </div>
         </nav>
 
-        <main class="space-y-6">
-          <div class="flex flex-col space-y-2">
+        <main class="w-full h-[80%] sm:w-auto sm:h-auto space-y-4 sm:space-y-6">
+          <div class="flex flex-col min-h-[272px] space-y-1 sm:space-y-2 h-[50%] sm:min-h-none">
             <WordCard
               v-for="i in 6"
               v-bind:id="'word-card-' + (i - 1)"
@@ -320,7 +325,7 @@ onBeforeUnload(() => {
           <Keyboard v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
 
           <div class="flex justify-center items-center space-x-4">
-            <button type="button" class="text-xl text-white px-4 py-2 rounded-xl bg-red-500" v-on:keydown.enter.prevent="" v-on:click="(event) => resetGameState()">Reset</button>
+            <button type="button" class="text-xl text-white px-2 py-1 rounded-xl bg-red-500" v-on:keydown.enter.prevent="" v-on:click="(event) => resetGameState()">Reset</button>
           </div>
         </main>
       </div>

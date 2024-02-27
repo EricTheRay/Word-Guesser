@@ -1,8 +1,14 @@
 [Feb. 9, 2024]
+Bugs:
 Layout issue on mobile devices.
 Local storage not refresh at date change.
 Status 'absent' overwriting 'present'.
 
 [Feb. 22, 2024]
+Fixes:
 Improved layout on mobile devices.
 Fixed status 'absent' overwriting 'present'.
+
+[Feb. 27, 2024]
+Bugs:
+Word card borders rendered incorrectly if resetted during recover animation from local storage.
