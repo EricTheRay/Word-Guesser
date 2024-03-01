@@ -1,40 +1,24 @@
-upstream word_guesser_django_server {
-    server unix:/webapps/word_guesser/venv/run/gunicorn.sock fail_timeout=0;
+upstream word_guesser_server {
+    server unix:/webapps/word_guesser/.venv/run/gunicorn.sock fail_timeout=0;
 }
 
 server {
     listen 80;
-    return 301 https://167.71.210.1$request_uri;
-}
 
-server {
-    listen 443 ssl;
+    access_log /webapps/word_guesser/.venv/logs/nginx-django-access.log;
+    error_log /webapps/word_guesser/.venv/logs/nginx-django-error.log;
 
-    client_max_body_size 4G;
-
-    access_log /webapps/word_guesser/venv/logs/nginx-django-access.log;
-    error_log /webapps/word_guesser/venv/logs/nginx-django-error.log;
-
-    ssl_certificate /etc/letsencrypt/live/word_guesser_django/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/word_guesser_django/privkey.pem;
-
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_prefer_server_ciphers on;
-    ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
-
-    location /word-guesser/static/ {
-        alias /webapps/word_guesser/venv/word_guesser/static/;
+    location /static {
+        alias /webapps/word_guesser/static;
     }
 
-    location /word-guesser/media/ {
-        alias /webapps/word_guesser/venv/word_guesser/media/;
+    location /media {
+        alias /webapps/word_guesser/media;
     }
 
-    location /word-guesser/ {
+    location /word-guesser-api {
         proxy_set_header X-Forward-For $proxy_add_x_forwarded_for;
-
         proxy_set_header Host $http_host;
-
         proxy_redirect off;
 
         if (!-f $request_filename) {
