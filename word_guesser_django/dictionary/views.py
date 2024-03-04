@@ -28,7 +28,7 @@ def submit_word(request: HttpRequest) -> HttpResponse:
         h = hashlib.blake2b(b'', digest_size = 4)
         h.update(date.encode('utf-8'))
 
-        answer = Word.objects.get(id = int(h.hexdigest(), 16) % n_words).word
+        answer = dictionary[int(h.hexdigest(), 16) % n_words].word
 
         answer_obj = { date: answer }
 

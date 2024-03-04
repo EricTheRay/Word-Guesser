@@ -5,12 +5,12 @@ Created on Wed Sep 27 15:07:12 2023
 @author: erict
 """
 
-import sqlite3 as sql
+import sqlite3
 from typing import Iterable
 
-path = "db.sqlite3"
+db_path = "db.sqlite3"
 
-def insert(con: sql.Connection, data: Iterable):
+def insert(con: sqlite3.Connection, data: Iterable):
 
     data_str = ""
     
@@ -27,7 +27,6 @@ def insert(con: sql.Connection, data: Iterable):
         if i != l - 1:
             data_str += ", "
 
-
     command = f"INSERT INTO DICTIONARY VALUES ({data_str})"
     
     con.execute(command)
@@ -37,7 +36,7 @@ def insert(con: sql.Connection, data: Iterable):
     return
 
     
-def select(con: sql.Connection, names: Iterable = []):
+def select(con: sqlite3.Connection, names: Iterable = []):
     
     data_str = ""
     
@@ -47,20 +46,20 @@ def select(con: sql.Connection, names: Iterable = []):
     else:
         data_str = ", ".join(names)
         
-    command = f"SELECT {data_str} FROM Dictionary"
+    command = f"SELECT {data_str} FROM dictionary_word"
     
     res = con.execute(command)
     
     return res.fetchall()
 
 
-def connect(path: str):
+def connect(db_path: str):
     
-    con = sql.connect(path)
+    con = sqlite3.connect(db_path)
     
     return con
 
-def close(con: sql.Connection):
+def close(con: sqlite3.Connection):
     
     con.close()
     
