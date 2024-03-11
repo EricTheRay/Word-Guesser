@@ -8,7 +8,7 @@ const props = defineProps<
 
 <template>
   <div class="flex justify-center">
-    <div class="font-inter text-lg font-semibold text-white rounded-xl bg-black p-2">
+    <div class="text-center font-inter text-lg font-semibold text-white rounded-xl bg-black p-2">
       {{ props.message }}
     </div>
   </div>

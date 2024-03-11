@@ -81,7 +81,7 @@ export const useGameStateStore = defineStore('gameState', () => {
 
   const toggleHardMode = function(): string {
     if (isHardMode.value === false && rowIndex.value > 0) {
-      return "Hard Mode can only be enabled in the beginning";
+      return "Hard Mode can only be enabled in the beginning of a round";
     }
 
     isHardMode.value = !isHardMode.value;
@@ -148,8 +148,6 @@ export const useGameStateStore = defineStore('gameState', () => {
     }
     
     const gameState = JSON.parse(item);
-
-    console.log(gameState.date);
 
     const last_date = new Date(gameState.date);
 
@@ -318,16 +316,21 @@ export const useGameStateStore = defineStore('gameState', () => {
     return;
   };
 
-  const clearIncompleteCard = function(): void {
-    for (let j = 0; j < 5; ++j) {
-      guessList[rowIndex.value][j] = ' ';
-    }
-
-    return;
-  }
-
   const saveGameStateToStorage = function(): void {
-    clearIncompleteCard();
+    
+    const tempGuessList = [ 
+      [' ', ' ', ' ', ' ', ' '], 
+      [' ', ' ', ' ', ' ', ' '], 
+      [' ', ' ', ' ', ' ', ' '], 
+      [' ', ' ', ' ', ' ', ' '], 
+      [' ', ' ', ' ', ' ', ' '], 
+      [' ', ' ', ' ', ' ', ' '], 
+      [' ', ' ', ' ', ' ', ' '] 
+    ];
+
+    for (let i = 0; i < rowIndex.value; ++i)
+      for (let j = 0; j < 5; ++j)
+        tempGuessList[i][j] = guessList[i][j];
 
     localStorage.setItem(
       'gameState', 
@@ -337,7 +340,7 @@ export const useGameStateStore = defineStore('gameState', () => {
         isDarkTheme: isDarkTheme.value, 
         isHighContrast: isHighContrast.value, 
         isComplete: isComplete.value, 
-        guessList: guessList, 
+        guessList: tempGuessList, 
         resultList: resultList
       })
     );

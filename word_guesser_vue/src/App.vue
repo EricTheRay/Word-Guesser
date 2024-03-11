@@ -59,6 +59,13 @@ onMounted(async () => {
     handleKeyboardInput(event.key);
   });
 
+  setInterval(
+    () => {
+      gameState.saveGameStateToStorage();
+    }, 
+    10000
+  );
+
   inputBlocked.value = false;
 
   return;
@@ -298,15 +305,17 @@ onBeforeUnload(() => {
     <div class="absolute w-screen h-screen bg-background overflow-auto">
       <SettingsMenu class="fixed z-10" v-bind:showModal="showModal" v-on:toggle-modal="() => toggleModal()" />
 
-      <div class="sm:mx-[10%] sm:my-[5%] p-4 sm:p-8 space-y-4 sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl sm:min-w-max h-full sm:h-auto">
+      <div class="sm:mx-[10%] sm:my-[5%] p-8 space-y-4 sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl sm:min-w-max h-full sm:h-auto">
         <nav class="grid grid-cols-5">
           <div class="flex"></div>
           <div class="col-span-3 flex justify-center items-center font-merriweather text-2xl sm:text-3xl font-bold text-positive">
             Word Guesser
           </div>
           <div class="flex justify-end items-center">
-            <button type="button" v-on:click="(event) => toggleModal()">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" width="24" height="24"><path class="fill-positive" d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/></svg>
+            <button type="button" class="w-5 h-5 sm:w-6 sm:h-6" v-on:click="(event) => toggleModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path class="fill-positive" d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z"/>
+              </svg>
             </button>
           </div>
         </nav>
@@ -331,12 +340,14 @@ onBeforeUnload(() => {
       </div>
     </div>
 
-    <div class="fixed top-[25%] w-full z-20 pointer-events-none">
-      <MessageBubbles 
-        id="bubbles" 
-        v-bind:store-id="'bubbles-0'"
-        v-bind:max-queue-size="5"
-      />
+    <div class="fixed flex justify-center top-[10%] sm:top-[10%] w-full z-20 pointer-events-none">
+      <div class="max-w-[70%]">
+        <MessageBubbles 
+          id="bubbles" 
+          v-bind:store-id="'bubbles-0'"
+          v-bind:max-queue-size="5"
+        />
+      </div>
     </div>
   </div>
 </template>

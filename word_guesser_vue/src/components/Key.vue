@@ -40,7 +40,7 @@ const getKeyDynamicClass = function(): Array<string> {
 <template>
   <div>
     <button type="button" 
-      class="w-full h-full flex justify-center items-center font-inter rounded-lg text-sm sm:text-base" 
+      class="w-full h-full flex justify-center items-center font-inter font-bold rounded-lg text-sm sm:text-base" 
       v-bind:class="getKeyDynamicClass()" 
       v-on:keydown.enter.prevent="" 
       v-on:click.prevent="(event) => handleClick()" 
