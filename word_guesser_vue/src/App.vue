@@ -6,10 +6,11 @@ import { animateClass, forceReflow } from '@/composables/Animations';
 import { useGameStateStore } from '@/stores/GameStateStore';
 import { useMessageBubbles } from '@/composables/MessageBubblesStore';
 import SettingsMenu from '@/components/SettingsMenu.vue';
-import WordCard from '@/components/WordCard.vue';
+import WordCard from '@/components/WordCards.vue';
 import Keyboard from '@/components/Keyboard.vue';
 import MessageBubbles from '@/components/MessageBubbles.vue';
 import axios from 'axios';
+import WordCards from '@/components/WordCards.vue';
 
 /* Data and Initilzation */
 
@@ -302,13 +303,13 @@ onBeforeUnload(() => {
 
 <template>
   <div v-bind:class="{ 'theme-light': !gameState.isDarkTheme, 'theme-dark': gameState.isDarkTheme, 'theme-normal-contrast': !gameState.isHighContrast, 'theme-high-contrast': gameState.isHighContrast }" v-cloak>
-    <div class="absolute w-screen h-screen bg-background overflow-auto">
-      <SettingsMenu class="fixed z-10" v-bind:showModal="showModal" v-on:toggle-modal="() => toggleModal()" />
+    <div class="fixed w-screen h-screen bg-background overflow-clip sm:overflow-auto">
+      <SettingsMenu class="fixed w-screen h-screen z-20 pointer-events-none" v-bind:showModal="showModal" v-on:toggle-modal="() => toggleModal()" />
 
-      <div class="sm:mx-[10%] sm:my-[5%] p-8 space-y-4 sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl sm:min-w-max h-full sm:h-auto">
-        <nav class="grid grid-cols-5">
+      <div class="py-4 sm:py-8 sm:mx-[10%] sm:my-[5%] space-y-4 sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl h-full sm:h-auto">
+        <nav class="grid grid-cols-5 px-4 sm:px-8 h-[10%]">
           <div class="flex"></div>
-          <div class="col-span-3 flex justify-center items-center font-merriweather text-2xl sm:text-3xl font-bold text-positive">
+          <div class="col-span-3 flex justify-center items-center font-merriweather text-2xl sm:text-3xl font-bold truncate text-positive">
             Word Guesser
           </div>
           <div class="flex justify-end items-center">
@@ -320,27 +321,19 @@ onBeforeUnload(() => {
           </div>
         </nav>
 
-        <main class="w-full h-[80%] sm:w-auto sm:h-auto space-y-4 sm:space-y-6">
-          <div class="flex flex-col min-h-[272px] space-y-1 sm:space-y-2 h-[50%] sm:min-h-none">
-            <WordCard
-              v-for="i in 6"
-              v-bind:id="'word-card-' + (i - 1)"
-              v-bind:letters="gameState.guessList[i - 1]"
-              v-bind:row-index="i - 1"
-              v-bind:ref="(elem) => setWordCardRef(elem, i - 1)"
-            />
-          </div>
+        <main class="w-full h-[80%] sm:w-auto sm:h-auto space-y-4 sm:space-y-8">
+          <WordCards class="w-full min-h-[272px] h-[60%] sm:h-auto" />
 
-          <Keyboard v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
+          <Keyboard class="w-full h-[40%] sm:h-auto" v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
 
-          <div class="flex justify-center items-center space-x-4">
+          <!-- <div class="w-full h-[10%] sm:h-auto flex justify-center items-center space-x-4">
             <button type="button" class="text-xl text-white px-2 py-1 rounded-xl bg-red-500" v-on:keydown.enter.prevent="" v-on:click="(event) => resetGameState()">Reset</button>
-          </div>
+          </div> -->
         </main>
       </div>
     </div>
 
-    <div class="fixed flex justify-center top-[10%] sm:top-[10%] w-full z-20 pointer-events-none">
+    <div class="fixed flex justify-center top-[10%] sm:top-[25%] w-full z-20 pointer-events-none">
       <div class="max-w-[70%]">
         <MessageBubbles 
           id="bubbles" 

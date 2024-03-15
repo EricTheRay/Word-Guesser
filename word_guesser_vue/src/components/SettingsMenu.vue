@@ -50,7 +50,7 @@ const toggleHighContrast = function(): void {
     >
       <div 
         v-if="props.showModal"
-        class="fixed w-screen h-screen bg-background/50"
+        class="fixed w-screen h-screen bg-background/50 pointer-events-auto"
         v-on:click="(event) => emit('toggle-modal')"
       ></div>
     </TransitionGroup>
@@ -63,8 +63,8 @@ const toggleHighContrast = function(): void {
       leave-to-class="opacity-0 translate-y-4" 
       leave-active-class="transition-all duration-[0.1s] ease-linear" 
     >
-      <div v-if="props.showModal === true" class="fixed w-screen h-screen flex justify-center pointer-events-none">
-        <div class="mt-[20%] w-[40%] min-w-[300px] h-max p-4 bg-sub rounded-xl shadow-lg pointer-events-auto">
+      <div v-if="props.showModal === true" class="fixed w-screen h-screen top-[20%] flex justify-center pointer-events-none">
+        <div class="w-[40%] min-w-[300px] h-max p-4 bg-sub rounded-xl shadow-lg pointer-events-auto">
           <div class="flex flex-col space-y-4">
             <div class="grid grid-cols-4">
               <div class="flex"></div>

@@ -4,12 +4,6 @@ import type { Ref } from 'vue';
 import { useGameStateStore } from '@/stores/GameStateStore';
 import { animateClass, ClassAndStyleList } from '@/composables/Animations';
 
-/* Props */
-
-const props = defineProps<{
-  rowIndex: number
-}>();
-
 /* Data and Initialization */
 
 const gameState = useGameStateStore();
@@ -24,12 +18,12 @@ const letterCardDynamicLists: Array<ClassAndStyleList> = reactive(
   [new ClassAndStyleList(), new ClassAndStyleList(), new ClassAndStyleList(), new ClassAndStyleList(), new ClassAndStyleList()]
 );
 
-onMounted(() => {
-  containerElement.value = document.querySelector(`#word-card-${props.rowIndex}`);
+// onMounted(() => {
+//   containerElement.value = document.querySelector(`#word-card-${props.rowIndex}`);
 
-  for (let i: number = 0; i < 5; ++i)
-    letterCardElements[i] = document.querySelector(`#word-card-${props.rowIndex} #letter-${i}`);
-});
+//   for (let i: number = 0; i < 5; ++i)
+//     letterCardElements[i] = document.querySelector(`#word-card-${props.rowIndex} #letter-${i}`);
+// });
 
 /* Animation Renderers */
 
@@ -71,60 +65,60 @@ const eraseLetter = function(idx: number): void {
   return;
 };
 
-for (let i = 0; i < 5; ++i) {
-  watch(
-    () => gameState.guessList[props.rowIndex][i], 
-    (newValue) => {
-      if (newValue !== ' ')
-        insertLetter(i, 1.05, 100);
+// for (let i = 0; i < 5; ++i) {
+//   watch(
+//     () => gameState.guessList[props.rowIndex][i], 
+//     (newValue) => {
+//       if (newValue !== ' ')
+//         insertLetter(i, 1.05, 100);
 
-      else
-        eraseLetter(i);
+//       else
+//         eraseLetter(i);
 
-      return;
-    }
-  );
-}
+//       return;
+//     }
+//   );
+// }
 
-const getCardDynamicClass = function(colIndex: number): Array<string> {
-  const classList: Array<string> = [];
+// const getCardDynamicClass = function(colIndex: number): Array<string> {
+//   const classList: Array<string> = [];
 
-  if (gameState.isFlipped[props.rowIndex][colIndex] === false) {
-    if (gameState.guessList[props.rowIndex][colIndex] === ' ') {
-      classList.push('border-empty');
-    }
-    else {
-      classList.push('border-inserted');
-    }
+//   if (gameState.isFlipped[props.rowIndex][colIndex] === false) {
+//     if (gameState.guessList[props.rowIndex][colIndex] === ' ') {
+//       classList.push('border-empty');
+//     }
+//     else {
+//       classList.push('border-inserted');
+//     }
     
-    classList.push('text-positive');
-  }
-  else {
-    if (gameState.resultList[props.rowIndex][colIndex] === 'correct') {
-      classList.push('bg-correct');
-      classList.push('border-correct');
-      classList.push('text-flipped-colored');
-    }
-    else if (gameState.resultList[props.rowIndex][colIndex] === 'present') {
-      classList.push('bg-present');
-      classList.push('border-present');
-      classList.push('text-flipped-colored');
-    }
-    else if (gameState.resultList[props.rowIndex][colIndex] === 'absent') {
-      classList.push('bg-absent');
-      classList.push('border-absent');
-      classList.push('text-flipped-uncolored');
-    }
-  }
+//     classList.push('text-positive');
+//   }
+//   else {
+//     if (gameState.resultList[props.rowIndex][colIndex] === 'correct') {
+//       classList.push('bg-correct');
+//       classList.push('border-correct');
+//       classList.push('text-flipped-colored');
+//     }
+//     else if (gameState.resultList[props.rowIndex][colIndex] === 'present') {
+//       classList.push('bg-present');
+//       classList.push('border-present');
+//       classList.push('text-flipped-colored');
+//     }
+//     else if (gameState.resultList[props.rowIndex][colIndex] === 'absent') {
+//       classList.push('bg-absent');
+//       classList.push('border-absent');
+//       classList.push('text-flipped-uncolored');
+//     }
+//   }
 
-  return classList;
-};
+//   return classList;
+// };
 
-const getCardDynamicStyle = function(colIndex: number): Record<string, string> {
-  const styleList: Record<string, string> = { ...letterCardDynamicLists[colIndex].styleList };
+// const getCardDynamicStyle = function(colIndex: number): Record<string, string> {
+//   const styleList: Record<string, string> = { ...letterCardDynamicLists[colIndex].styleList };
 
-  return styleList;
-};
+//   return styleList;
+// };
 
 const shiverCard = function(amplitude: string, duration: number): void {
   animateClass(
@@ -154,12 +148,12 @@ const flipCard = function(duration: number, increment: number) {
       }
     );
 
-    setTimeout(
-      () => {
-        gameState.flip(props.rowIndex, colIndex);
-      }, 
-      duration / 2
-    );
+    // setTimeout(
+    //   () => {
+    //     gameState.flip(props.rowIndex, colIndex);
+    //   }, 
+    //   duration / 2
+    // );
 
     setTimeout(
       () => {
@@ -214,20 +208,25 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex w-full h-full justify-center">
-    <div class="flex justify-center w-full max-w-[272px] sm:max-w-none space-x-1 sm:space-x-2">
+  <div class="flex justify-center">
+    <div class="p-1.5 sm:p-0 flex flex-col space-y-1.5 sm:space-y-2">
       <div
-        class="w-[15%] h-full sm:w-auto sm:h-auto"
-        v-for="i in 5"
-        v-bind:key="i"
-        v-bind:id="'letter-' + (i - 1)"
+        v-for="i in 6"
+        v-bind:id="`word-card-${i - 1}`"
+        class="flex w-full h-[16%] sm:h-auto justify-center"
       >
-        <div 
-          class="flex justify-center items-center font-inter font-bold text-3xl w-full h-full sm:w-12 sm:h-12 border-2" 
-          v-bind:class="getCardDynamicClass(i - 1)" 
-          v-bind:style="getCardDynamicStyle(i - 1)" 
-        >
-        {{ gameState.guessList[props.rowIndex][i - 1] }}
+        <div class="flex justify-center w-full max-w-[272px] sm:max-w-none space-x-1 sm:space-x-2">
+          <div
+            class="w-[15%] h-full sm:w-auto sm:h-auto"
+            v-for="j in 5"
+            v-bind:id="'letter-' + (j - 1)"
+          >
+            <div
+              class="flex justify-center items-center font-inter font-bold text-3xl w-full h-full sm:w-12 sm:h-12 border-2" 
+            >
+            {{ 'A' }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
