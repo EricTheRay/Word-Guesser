@@ -198,13 +198,15 @@ export const useGameStateStore = defineStore('gameState', () => {
     return;
   };
 
-  const inputLetter = function(letter: string): void {
+  const inputLetter = function(letter: string): [number, number] {
     if (isComplete.value === true || colIndex.value === 5)
-      return;
+      return [-1, -1];
+
+    const indices: [number, number] = [rowIndex.value, colIndex.value];
 
     guessList[rowIndex.value][colIndex.value++] = letter;
 
-    return;
+    return indices;
   };
 
   const eraseLetter = function(): void {

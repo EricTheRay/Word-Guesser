@@ -8,24 +8,65 @@ import { animateClass, ClassAndStyleList } from '@/composables/Animations';
 
 const gameState = useGameStateStore();
 
-const containerElement: Ref<HTMLElement | null> = ref(null);
-
-const letterCardElements: Array<HTMLElement | null> = reactive(
-  [null, null, null, null, null]
+const wordCardElements: Array<HTMLElement | null> = reactive(
+  [null, null, null, null, null, null]
 );
 
-const letterCardDynamicLists: Array<ClassAndStyleList> = reactive(
-  [new ClassAndStyleList(), new ClassAndStyleList(), new ClassAndStyleList(), new ClassAndStyleList(), new ClassAndStyleList()]
+const letterCardElements: Array<Array<HTMLElement | null>> = reactive(
+  [
+    [null, null, null, null, null], 
+    [null, null, null, null, null], 
+    [null, null, null, null, null], 
+    [null, null, null, null, null], 
+    [null, null, null, null, null], 
+    [null, null, null, null, null]
+  ]
 );
 
-// onMounted(() => {
-//   containerElement.value = document.querySelector(`#word-card-${props.rowIndex}`);
+onMounted(() => {
+  for (let i = 0; i < 6; ++i) {
+    wordCardElements[i] = document.querySelector(`#word-card-${i}`);
+    for (let j = 0; j < 5; ++j) {
+      letterCardElements[i][j] = document.querySelector(`#word-card-${i} #letter-${j}`);
+    }
+  }
+});
 
-//   for (let i: number = 0; i < 5; ++i)
-//     letterCardElements[i] = document.querySelector(`#word-card-${props.rowIndex} #letter-${i}`);
-// });
+/* Classes and Styling */
 
-/* Animation Renderers */
+const getLetterCardClass = function(rowIndex:number, colIndex: number): Array<string> {
+  const classList: Array<string> = [];
+
+  if (gameState.isFlipped[rowIndex][colIndex] === false) {
+    if (gameState.guessList[rowIndex][colIndex] === ' ') {
+      classList.push('border-empty');
+    }
+    else {
+      classList.push('border-inserted');
+    }
+    
+    classList.push('text-positive');
+  }
+  else {
+    if (gameState.resultList[rowIndex][colIndex] === 'correct') {
+      classList.push('bg-correct');
+      classList.push('border-correct');
+      classList.push('text-flipped-colored');
+    }
+    else if (gameState.resultList[rowIndex][colIndex] === 'present') {
+      classList.push('bg-present');
+      classList.push('border-present');
+      classList.push('text-flipped-colored');
+    }
+    else if (gameState.resultList[rowIndex][colIndex] === 'absent') {
+      classList.push('bg-absent');
+      classList.push('border-absent');
+      classList.push('text-flipped-uncolored');
+    }
+  }
+
+  return classList;
+};
 
 // const addToDynamicList = function(list: ClassAndStyleList, duration: number, dynamicCLass: string, dynamicStyles: Record<string, string>): void {
   
@@ -47,9 +88,17 @@ const letterCardDynamicLists: Array<ClassAndStyleList> = reactive(
 //   );
 // };
 
-const insertLetter = function(idx: number, amplitude: number, duration: number): void {
+// const getCardDynamicStyle = function(colIndex: number): Record<string, string> {
+//   const styleList: Record<string, string> = { ...letterCardDynamicLists[colIndex].styleList };
+
+//   return styleList;
+// };
+
+/* Animation Renderers */
+
+const insertLetter = function(rowIndex: number, colIndex: number, amplitude: number, duration: number): void {
   animateClass(
-    letterCardElements[idx]!, 
+    letterCardElements[rowIndex][colIndex]!, 
     duration,  
     'animate-inflate', 
     {
@@ -61,68 +110,13 @@ const insertLetter = function(idx: number, amplitude: number, duration: number):
   return;
 };
 
-const eraseLetter = function(idx: number): void {
+const eraseLetter = function(rowIndex: number, colIndex: number): void {
   return;
 };
 
-// for (let i = 0; i < 5; ++i) {
-//   watch(
-//     () => gameState.guessList[props.rowIndex][i], 
-//     (newValue) => {
-//       if (newValue !== ' ')
-//         insertLetter(i, 1.05, 100);
-
-//       else
-//         eraseLetter(i);
-
-//       return;
-//     }
-//   );
-// }
-
-// const getCardDynamicClass = function(colIndex: number): Array<string> {
-//   const classList: Array<string> = [];
-
-//   if (gameState.isFlipped[props.rowIndex][colIndex] === false) {
-//     if (gameState.guessList[props.rowIndex][colIndex] === ' ') {
-//       classList.push('border-empty');
-//     }
-//     else {
-//       classList.push('border-inserted');
-//     }
-    
-//     classList.push('text-positive');
-//   }
-//   else {
-//     if (gameState.resultList[props.rowIndex][colIndex] === 'correct') {
-//       classList.push('bg-correct');
-//       classList.push('border-correct');
-//       classList.push('text-flipped-colored');
-//     }
-//     else if (gameState.resultList[props.rowIndex][colIndex] === 'present') {
-//       classList.push('bg-present');
-//       classList.push('border-present');
-//       classList.push('text-flipped-colored');
-//     }
-//     else if (gameState.resultList[props.rowIndex][colIndex] === 'absent') {
-//       classList.push('bg-absent');
-//       classList.push('border-absent');
-//       classList.push('text-flipped-uncolored');
-//     }
-//   }
-
-//   return classList;
-// };
-
-// const getCardDynamicStyle = function(colIndex: number): Record<string, string> {
-//   const styleList: Record<string, string> = { ...letterCardDynamicLists[colIndex].styleList };
-
-//   return styleList;
-// };
-
-const shiverCard = function(amplitude: string, duration: number): void {
+const shiverCard = function(rowIndex: number, amplitude: string, duration: number): void {
   animateClass(
-    containerElement.value!, 
+    wordCardElements[rowIndex]!, 
     duration, 
     'animate-shiver', 
     {
@@ -132,7 +126,7 @@ const shiverCard = function(amplitude: string, duration: number): void {
   );
 };
 
-const flipCard = function(duration: number, increment: number) {
+const flipCard = function(rowIndex: number, duration: number, increment: number) {
 
   const flipLetterCard = function(colIndex: number) {
 
@@ -140,7 +134,7 @@ const flipCard = function(duration: number, increment: number) {
       return;
 
     animateClass(
-      letterCardElements[colIndex]!, 
+      letterCardElements[rowIndex][colIndex]!, 
       duration, 
       'animate-flip-x', 
       {
@@ -148,12 +142,12 @@ const flipCard = function(duration: number, increment: number) {
       }
     );
 
-    // setTimeout(
-    //   () => {
-    //     gameState.flip(props.rowIndex, colIndex);
-    //   }, 
-    //   duration / 2
-    // );
+    setTimeout(
+      () => {
+        gameState.flip(rowIndex, colIndex);
+      }, 
+      duration / 2
+    );
 
     setTimeout(
       () => {
@@ -168,7 +162,7 @@ const flipCard = function(duration: number, increment: number) {
   return;
 };
 
-const bounceCard = function(amplitude: string, duration: number, increment: number): void {
+const bounceCard = function(rowIndex: number, amplitude: string, duration: number, increment: number): void {
 
   const bounceLetterCard = function(colIndex: number) {
 
@@ -176,7 +170,7 @@ const bounceCard = function(amplitude: string, duration: number, increment: numb
       return;
 
     animateClass(
-      letterCardElements[colIndex]!, 
+      letterCardElements[rowIndex][colIndex]!, 
       duration, 
       'animate-bounce', 
       {
@@ -208,23 +202,24 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex justify-center">
-    <div class="p-1.5 sm:p-0 flex flex-col space-y-1.5 sm:space-y-2">
+  <div class="">
+    <div class="w-full h-full sm:w-auto sm:h-auto sm:max-h-none flex flex-col space-y-[1.5%] sm:space-y-2">
       <div
-        v-for="i in 6"
-        v-bind:id="`word-card-${i - 1}`"
+        v-for="i in [0, 1, 2, 3, 4, 5]"
+        v-bind:id="`word-card-${i}`"
         class="flex w-full h-[16%] sm:h-auto justify-center"
       >
-        <div class="flex justify-center w-full max-w-[272px] sm:max-w-none space-x-1 sm:space-x-2">
+        <div class="flex justify-center w-full max-w-[280px] sm:max-w-none space-x-[2%] sm:space-x-2">
           <div
-            class="w-[15%] h-full sm:w-auto sm:h-auto"
-            v-for="j in 5"
-            v-bind:id="'letter-' + (j - 1)"
+            class="w-[18%] h-full sm:w-auto sm:h-auto"
+            v-for="j in [0, 1, 2, 3, 4]"
+            v-bind:id="`letter-${j}`"
           >
             <div
               class="flex justify-center items-center font-inter font-bold text-3xl w-full h-full sm:w-12 sm:h-12 border-2" 
+              v-bind:class="getLetterCardClass(i, j)"
             >
-            {{ 'A' }}
+              {{ gameState.guessList[i][j] }}
             </div>
           </div>
         </div>

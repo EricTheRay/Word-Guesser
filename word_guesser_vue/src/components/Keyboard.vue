@@ -15,7 +15,7 @@ const handleKeyClick = function(key: string): void {
 </script>
 
 <template>
-  <div class="w-full h-full max-h-[120px] sm:max-h-none">
+  <div class="">
     <div class="w-full h-full flex flex-col space-y-[1%] sm:space-y-2">
       <div class="flex justify-center w-full h-[31%] sm:h-auto">
         <div class="px-[1.5%] flex justify-center space-x-[1.5%] w-full max-w-[320px] sm:space-x-2 sm:max-w-none">

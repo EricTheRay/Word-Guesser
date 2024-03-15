@@ -26,3 +26,8 @@ Fixes:
 Game state is stored every 10 seconds.
 Improved layout on mobile devices.
 Made svg's responsive to viewport size.
+
+[Mar. 15, 2024]
+Fixes:
+Further improved layout on mobile devices.
+Rewrote part of WordCards component.
