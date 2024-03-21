@@ -19,7 +19,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+urlpatterns_raw = [
+    path('admin/', admin.site.urls),
+    path('api/', include('dictionary.urls'))
+]
+
 urlpatterns = [
-    path('word-guesser-api/admin/', admin.site.urls),
-    path('word-guesser-api/api/', include('dictionary.urls'))
+    path(settings.BASE_URL, include(urlpatterns_raw))
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

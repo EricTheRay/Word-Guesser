@@ -126,9 +126,9 @@ const shiverCard = function(rowIndex: number, amplitude: string, duration: numbe
   );
 };
 
-const flipCard = function(rowIndex: number, duration: number, increment: number) {
+const flipCard = function(rowIndex: number, duration: number, increment: number): void {
 
-  const flipLetterCard = function(colIndex: number) {
+  const flipLetterCard = function(colIndex: number): void {
 
     if (colIndex === 5)
       return;

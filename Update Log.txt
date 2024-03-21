@@ -31,3 +31,8 @@ Made svg's responsive to viewport size.
 Fixes:
 Further improved layout on mobile devices.
 Rewrote part of WordCards component.
+
+[Mar. 21, 2024]
+Tried to rewrite base url to '/', but to no avail. All changes reverted.
+Bugs:
+Card rendered gray despite actually being 'present' or 'correct'.
