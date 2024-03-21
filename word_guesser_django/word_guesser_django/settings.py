@@ -33,6 +33,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
 
+BASE_URL = 'word-guesser-api/'
+
 # Application definition
 
 INSTALLED_APPS = [
