@@ -1,0 +1,5 @@
+*.ps1
+*.conf
+*.zip
+gunicorn_start
+nginx_settings

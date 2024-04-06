@@ -33,7 +33,7 @@ module.exports = {
       }, 
       fontFamily: {
         'inter': "'Inter'", 
-        'merriweather': "'Merriweather'", 
+        'merriweather': "'Merriweather', 'san-serif'", 
       }, 
     },
   },

@@ -35,6 +35,7 @@ CORS_ALLOWED_ORIGINS = [
 
 BASE_URL = 'word-guesser-api/'
 
+
 # Application definition
 
 INSTALLED_APPS = [

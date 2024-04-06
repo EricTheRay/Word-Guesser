@@ -306,7 +306,7 @@ onBeforeUnload(() => {
     <div class="fixed w-full h-full bg-background overflow-clip sm:overflow-auto">
       <SettingsMenu class="fixed w-screen h-screen z-20 pointer-events-none" v-bind:showModal="showModal" v-on:toggle-modal="() => toggleModal()" />
 
-      <div class="py-[2%] sm:py-8 sm:mx-[10%] sm:my-[10%] space-y-[4%] sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl h-full sm:h-auto">
+      <div class="py-[2%] sm:py-8 sm:mx-[10%] sm:my-[5%] space-y-[4%] sm:space-y-8 bg-main shadow-sm shadow-gray-600 sm:rounded-xl h-full sm:h-auto">
         <nav class="grid grid-cols-5 px-4 sm:px-8 h-[8%] truncate sm:h-auto">
           <div class="flex"></div>
           <div class="col-span-3 flex justify-center items-center font-merriweather text-2xl sm:text-3xl font-bold text-positive truncate">
@@ -323,9 +323,9 @@ onBeforeUnload(() => {
 
         <main class="flex w-full h-[90%] sm:w-auto sm:h-auto">
           <div class="flex flex-col w-full h-full space-y-[5%] sm:space-y-8">
-            <WordCards class="w-full h-[70%] max-h-[336px] sm:h-auto sm:max-h-none" ref="wordCardsRef" />
+            <WordCards class="w-auto h-auto" ref="wordCardsRef" />
 
-            <Keyboard class="w-full h-[30%] max-h-[120px] sm:h-auto sm:max-h-none" v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
+            <Keyboard class="w-full min-h-[120px] sm:h-auto sm:max-h-none" v-bind:letter-list="gameState.letterList" v-on:key-input="(key) => handleKeyboardInput(key)"/>
 
             <div class="w-full h-[10%] sm:h-auto flex justify-center items-center space-x-4">
               <button type="button" class="text-xl text-white px-2 py-1 rounded-xl bg-red-500" v-on:keydown.enter.prevent="" v-on:click="(event) => resetGameState()">Reset</button>

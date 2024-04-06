@@ -203,13 +203,12 @@ defineExpose({
 
 <template>
   <div class="">
-    <div class="w-full h-full sm:w-auto sm:h-auto sm:max-h-none flex flex-col space-y-[1.5%] sm:space-y-2">
+    <div class="w-full h-full sm:h-auto flex flex-col items-center space-y-[1.5%] sm:space-y-2">
       <div
         v-for="i in [0, 1, 2, 3, 4, 5]"
         v-bind:id="`word-card-${i}`"
-        class="flex w-full h-[16%] sm:h-auto justify-center"
+        class="flex px-[2%] w-full aspect-[6/1] sm:aspect-auto sm:h-auto justify-center max-w-[280px] sm:max-w-none space-x-[2%] sm:space-x-2"
       >
-        <div class="flex justify-center w-full max-w-[280px] sm:max-w-none space-x-[2%] sm:space-x-2">
           <div
             class="w-[18%] h-full sm:w-auto sm:h-auto"
             v-for="j in [0, 1, 2, 3, 4]"
@@ -222,7 +221,6 @@ defineExpose({
               {{ gameState.guessList[i][j] }}
             </div>
           </div>
-        </div>
       </div>
     </div>
   </div>

@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer utilities {
+  .key-normal {
+    @apply w-[8.5%] h-full sm:w-8 sm:h-10;
+  }
+
+  .key-wide {
+    @apply w-[14%] h-full sm:w-[52px] sm:h-10;
+  }
+
   @keyframes shiver {
     0%, 20%, 40%, 60%, 100% {
       transform: translateX(0px);
